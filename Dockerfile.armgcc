@@ -2,11 +2,15 @@ FROM debian:12-slim
 LABEL DESCRIPTION="Debian based image for ARM GCC builds for Smart Mechatronics"
 
 #
-# Run with -v (Volume) to your microcontroller project and execute makefile
+# 1. Build with ARM-GCC version as build parameter
+# 2. Run with volume parameter to your microcontroller project and run make / cmake
 #
 
-# ARM-GCC version as environment input parameter, check with URL below!
-ENV ARM_GCC_VERSION 10.3-2021.10
+# ARM-GCC version as input parameter
+# set during builds: docker build --build-arg ARM_GCC_VERSION=10.3-2021.07 -f ... -t ... <folder-to-dockerfile>
+# for versions, see https://developer.arm.com/downloads/-/gnu-rm
+# test your version string with download URL below!
+ARG ARM_GCC_VERSION=10.3-2021.10
 
 # Container internal settings
 ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/Berlin"
@@ -31,8 +35,6 @@ ENV PATH="/opt/gcc-arm-none-eabi-${ARM_GCC_VERSION}/bin:${PATH}"
 
 # Print ARM GCC version for verification
 RUN arm-none-eabi-gcc --version
-
-WORKDIR /app
 
 RUN useradd --create-home --shell /bin/bash --uid 1000 --user-group user
 USER user
